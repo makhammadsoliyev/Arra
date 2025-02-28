@@ -1,19 +1,19 @@
 ﻿namespace Arra.Domain.Expenses;
 
-public sealed record Percentege
+public sealed record Percentage
 {
-    private Percentege(decimal value)
+    private Percentage(decimal value)
     {
         Value = value;
     }
 
     public decimal Value { get; private set; }
 
-    public static Percentege Create(decimal value)
+    public static Percentage Create(decimal value)
     {
         if (value < 0 || value > 100)
             throw new ApplicationException("Percentage must be between 0 and 100");
 
-        return new Percentege(value);
+        return new Percentage(value);
     }
 }

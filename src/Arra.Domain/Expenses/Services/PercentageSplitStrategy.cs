@@ -15,7 +15,7 @@ public sealed class PercentageSplitStrategy : IExpenseSplitStrategy
 
         return userIds.Select((userId, index) =>
         {
-            var percentage = Percentege.Create(values[index]);
+            var percentage = Percentage.Create(values[index]);
             return ExpenseShare.Create(
                 expenseId,
                 userId,

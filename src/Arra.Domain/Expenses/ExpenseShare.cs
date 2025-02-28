@@ -1,4 +1,5 @@
-﻿using Arra.SharedKernel;
+﻿using Arra.Domain.Expenses.Events;
+using Arra.SharedKernel;
 
 namespace Arra.Domain.Expenses;
 
@@ -10,9 +11,8 @@ public sealed class ExpenseShare : Entity
         Guid userId,
         Money amountOwned,
         SplitType splitType,
-        Percentege percentege)
+        Percentage percentege) : base(id)
     {
-        Id = id;
         ExpenseId = expenseId;
         UserId = userId;
         AmountOwned = amountOwned;
@@ -28,21 +28,25 @@ public sealed class ExpenseShare : Entity
 
     public SplitType SplitType { get; private set; }
 
-    public Percentege Percentege { get; private set; }
+    public Percentage Percentege { get; private set; }
 
     public static ExpenseShare Create(
         Guid expenseId,
         Guid userId,
         Money amountOwned,
         SplitType splitType,
-        Percentege percentege)
+        Percentage percentege)
     {
-        return new ExpenseShare(
+        var newShare = new ExpenseShare(
             Guid.NewGuid(),
             expenseId,
             userId,
             amountOwned,
             splitType,
             percentege);
+
+        newShare.RaiseDomainEvent(new ExpenseShareAddedDomainEvent(newShare.Id));
+
+        return newShare;
     }
 }

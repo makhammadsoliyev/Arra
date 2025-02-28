@@ -1,21 +1,20 @@
-﻿using Arra.Domain.Groups.Events;
-using Arra.SharedKernel;
+﻿using Arra.SharedKernel;
 
 namespace Arra.Domain.Groups;
 
 public sealed class Group : AggregateRoot
 {
-    private readonly List<GroupMember> members = [];
+    private readonly List<GroupMember> members;
 
     private Group(
         Guid id,
         GroupName name,
         Guid ownerId,
-        DateTime createdOnUtc)
+        DateTime createdOnUtc) : base(id)
     {
-        Id = id;
         Name = name;
         CreatedOnUtc = createdOnUtc;
+        members = [];
 
         AddMember(ownerId, GroupRole.Owner, createdOnUtc);
     }
@@ -38,8 +37,6 @@ public sealed class Group : AggregateRoot
 
         var newMember = GroupMember.Create(Id, userId, role, joinedOnUtc);
         members.Add(newMember);
-
-        RaiseDomainEvent(new GroupMemberAddedDomainEvent(this.Id, userId));
 
         return Result.Success();
     }

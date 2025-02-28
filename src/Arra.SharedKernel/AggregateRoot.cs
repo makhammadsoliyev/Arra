@@ -1,7 +1,5 @@
-﻿namespace Arra.SharedKernel;
+﻿
+namespace Arra.SharedKernel;
 
-public abstract class AggregateRoot : Entity
-{
-    protected AggregateRoot()
-    { }
-}
+public abstract class AggregateRoot(Guid id) : Entity(id)
+{ }

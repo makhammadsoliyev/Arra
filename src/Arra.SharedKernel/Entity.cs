@@ -1,8 +1,8 @@
 ﻿namespace Arra.SharedKernel;
 
-public abstract class Entity
+public abstract class Entity(Guid id) : IEntity
 {
-    public Guid Id { get; protected set; }
+    public Guid Id { get; protected set; } = id;
 
 
     private readonly List<IDomainEvent> domainEvents;

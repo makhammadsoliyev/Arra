@@ -1,4 +1,5 @@
-﻿using Arra.Domain.Users;
+﻿using Arra.Domain.Groups.Events;
+using Arra.Domain.Users;
 using Arra.SharedKernel;
 
 namespace Arra.Domain.Groups;
@@ -10,9 +11,8 @@ public sealed class GroupMember : Entity
         Guid groupId,
         Guid userId,
         GroupRole role,
-        DateTime joinedOnUtc)
+        DateTime joinedOnUtc) : base(id)
     {
-        Id = id;
         GroupId = groupId;
         UserId = userId;
         Role = role;
@@ -37,6 +37,14 @@ public sealed class GroupMember : Entity
         GroupRole role,
         DateTime joinedOnUtc)
     {
-        return new GroupMember(Guid.NewGuid(), groupId, userId, role, joinedOnUtc);
+        var newMember = new GroupMember(
+            Guid.NewGuid(),
+            groupId,
+            userId,
+            role,
+            joinedOnUtc);
+        newMember.RaiseDomainEvent(new GroupMemberJoinedDomainEvent(newMember.Id));
+
+        return newMember;
     }
 }

@@ -1,5 +1,4 @@
-﻿using Arra.Domain.Expenses.Events;
-using Arra.Domain.Groups;
+﻿using Arra.Domain.Groups;
 using Arra.Domain.Users;
 using Arra.SharedKernel;
 
@@ -12,14 +11,13 @@ public sealed class Expense : AggregateRoot
     private Expense(
         Guid id,
         Guid groupId,
-        Guid paidById,
+        Guid paidByUserId,
         Money amount,
         Description description,
-        DateTime createdOnUtc)
+        DateTime createdOnUtc) : base(id)
     {
-        Id = id;
         GroupId = groupId;
-        PaidById = paidById;
+        PaidByUserId = paidByUserId;
         Amount = amount;
         Description = description;
         CreatedOnUtc = createdOnUtc;
@@ -30,9 +28,9 @@ public sealed class Expense : AggregateRoot
 
     public Group Group { get; private set; }
 
-    public Guid PaidById { get; private set; }
+    public Guid PaidByUserId { get; private set; }
 
-    public User PaidBy { get; private set; }
+    public User PaidByUser { get; private set; }
 
     public Money Amount { get; private set; }
 
@@ -44,25 +42,27 @@ public sealed class Expense : AggregateRoot
 
     public static Expense Create(
         Guid groupId,
-        Guid paidById,
+        Guid paidByUserId,
         Money amount,
         Description description,
         DateTime createdOnUtc)
     {
-        return new Expense(
+        var newExpense = new Expense(
             Guid.NewGuid(),
             groupId,
-            paidById,
+            paidByUserId,
             amount,
             description,
             createdOnUtc);
+
+        return newExpense;
     }
 
     public Result AddShare(
         Guid userId,
         Money amountOwned,
         SplitType splitType,
-        Percentege percentege)
+        Percentage percentege)
     {
         if (shares.Any(share => share.UserId == userId))
             return Result.Failure(ExpenseErrors.DuplicateShare(userId));
@@ -74,8 +74,6 @@ public sealed class Expense : AggregateRoot
             splitType,
             percentege);
         shares.Add(newShare);
-
-        RaiseDomainEvent(new ExpenseShareAddedDomainEvent(newShare.Id));
 
         return Result.Success();
     }
